@@ -4,13 +4,15 @@
 \alias{cholPermute}
 \title{Sparse Cholesky Factorisation with fill-in reducing permutations}
 \usage{
-cholPermute(Q, returnlist = TRUE)
+cholPermute(Q, method = NULL)
 }
 \arguments{
 \item{Q}{matrix (sparse or dense), the Cholesky factor of which needs to be found}
+
+\item{method}{If "amd", Timothy Davis SuiteSparse algorithm is used, if not that in the R Matrix package is employed}
 }
 \value{
-A list with two elements, Qpermchol (the permuted Cholesky factor) and P (the pivoting order matrix) of class Matrix. Note that spam matrices are not returned to comply with the Takahashi_Davis function which requires objects of class Matrix.
+A list with two elements, Qpermchol (the permuted Cholesky factor) and P (the pivoting order matrix)
 }
 \description{
 This function is similar to chol(A,pivot=T) when A is a sparse matrix. The fill-in reduction permutation is the approximate minimum degree permutation of

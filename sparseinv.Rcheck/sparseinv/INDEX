@@ -1,0 +1,9 @@
+Takahashi_Davis         Takahashi equations
+cholPermute             Sparse Cholesky Factorisation with fill-in
+                        reducing permutations
+cholsolve               Solve the equation Qx = y
+cholsolveAQinvAT        Solve the equation X = AQ^-1t(A) under
+                        permutations
+densify                 Densify with explicit zeroes
+sparseinv-package       sparseinv
+symb                    Return the symbolic representation of a Matrix

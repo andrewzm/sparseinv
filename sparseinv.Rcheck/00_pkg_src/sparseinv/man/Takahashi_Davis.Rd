@@ -4,17 +4,17 @@
 \alias{Takahashi_Davis}
 \title{Takahashi equations}
 \usage{
-Takahashi_Davis(Q = NULL, cholQp = NULL, return_perm_chol = 0, P = 0,
+Takahashi_Davis(Q, return_perm_chol = 0, cholQp = matrix(0, 0, 0), P = 0,
   gc = 0)
 }
 \arguments{
 \item{Q}{precision matrix (sparse or dense)}
 
-\item{cholQp}{the permuted Cholesky factor of Q (if known already). If both \code{Q} and \code{cholQp} are specified, \code{Q} is ignored}
+\item{return_perm_chol}{if 1 returns the permuted Cholesky factor (not advisable for large systems)}
 
-\item{return_perm_chol}{if 1 returns the permuted Cholesky factor}
+\item{cholQp}{the permuted Cholesky factor of Q (if known already)}
 
-\item{P}{the permutation matrix (if known already)}
+\item{P}{the pivot matrix (if known already)}
 
 \item{gc}{do garbage collection throughout (takes some time but useful for small memory machines)}
 }
@@ -24,26 +24,24 @@ If !(return_perm_chol  == 0), returns a list with three elements, S (the partial
 permutation matrix)
 }
 \description{
-Computes the sparse inverse subset of a sparse matrix \code{Q} using the Takahashi equations.
+Computes the sparse inverse of a sparse matrix \code{Q} of using the Takahashi equations.
 }
 \details{
-This function first computes the Cholesky factor of \code{Q}. The fill-in reduction permutation is the approximate minimum degree permutation (amd) of Timothy Davis' SuiteSparse package configured to be slightly more aggressive than that in the \code{Matrix} package. The function then uses the Takahashi equations to compute the variances at the non-zero locations in the Cholesky factor from the factor itself. The equations themselves are implemented in C using the SparseSuite package of Timothy Davis.
+This function first computes the Cholesky factor of \code{Q}. The fill-in reduction permutation is the approximate minimum degree permutation (amd) of Timothy Davis' SuiteSparse package configured to be slightly more aggressive than that in the Matrix package. If the Cholesky factor fails, the matrix is coerced to be symmetric. The function then uses the Takahashi equations to compute the variances at the non-zero locations of the Cholesky factor from the factor itself. The equations themselves are implemented in C using the SparseSuite package of Timothy Davis.
 }
 \note{
 This package is a wrapper for C functions implemented by Timothy Davis in SuiteSparse. The author of this package has done no work on the sparse inverse routines themselves and any acknowledgment should include one to SuiteSparse (see below for reference). The author of this package was made aware of this methodology by Botond Cseke.
 }
 \examples{
 require(Matrix)
-Q = sparseMatrix(i = c(1, 1, 2, 2),
-                 j = c(1, 2, 1, 2),
-                 x = c(0.1, 0.2, 0.2, 1))
+Q = sparseMatrix(i=c(1,1,2,2),j=c(1,2,1,2),x=c(0.1,0.2,0.2,1))
 X <- cholPermute(Q)
-S_partial = Takahashi_Davis(Q, cholQp = X$Qpermchol, P = X$P)
+S_partial = Takahashi_Davis(Q,cholQp = X$Qpermchol,P=X$P)
 }
 \references{
 Takahashi, K., Fagan, J., Chin, M.-S., 1973. Formation of a sparse bus impedance matrix and its application to short circuit study. 8th PICA Conf. Proc. June 4--6, Minneapolis, Minn.
 
-Davis, T., 2014. sparseinv: Sparse Inverse Subset. URL https://au.mathworks.com/matlabcentral/fileexchange/33966-sparseinv--sparse-inverse-subset
+Davis, T., 2011. SPARSEINV: A MATLAB toolbox for computing the sparse inverse subset using the Takahashi equations. URL http://faculty.cse.tamu.edu/davis/suitesparse.html
 }
 \keyword{Cholesky}
 \keyword{factor,}

@@ -1,0 +1,59 @@
+* installing *source* package 'sparseinv' ...
+** libs
+
+*** arch - i386
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_1.c -o amd_1.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_2.c -o amd_2.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_aat.c -o amd_aat.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_control.c -o amd_control.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_defaults.c -o amd_defaults.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_dump.c -o amd_dump.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_global.c -o amd_global.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_info.c -o amd_info.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_order.c -o amd_order.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_order_wrapper.c -o amd_order_wrapper.o
+amd_order_wrapper.c: In function 'AMD_order_wrapper':
+amd_order_wrapper.c:15:1: warning: 'return' with a value, in function returning void
+ return(NULL);
+ ^
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_post_tree.c -o amd_post_tree.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_postorder.c -o amd_postorder.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_preprocess.c -o amd_preprocess.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c amd_valid.c -o amd_valid.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c sparseinv-init.c -o sparseinv-init.o
+c:/Rtools/mingw_32/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O3 -Wall  -std=gnu99 -mtune=core2 -c sparseinvR.c -o sparseinvR.o
+c:/Rtools/mingw_32/bin/gcc -shared -s -static-libgcc -o sparseinv.dll tmp.def amd_1.o amd_2.o amd_aat.o amd_control.o amd_defaults.o amd_dump.o amd_global.o amd_info.o amd_order.o amd_order_wrapper.o amd_post_tree.o amd_postorder.o amd_preprocess.o amd_valid.o sparseinv-init.o sparseinvR.o -Ld:/Compiler/gcc-4.9.3/local330/lib/i386 -Ld:/Compiler/gcc-4.9.3/local330/lib -LC:/PROGRA~1/R/R-34~1.0/bin/i386 -lR
+installing to C:/Users/Andrew/Dropbox/CurrentProjects/Wollongong/pkgs/sparseinv/sparseinv.Rcheck/sparseinv/libs/i386
+
+*** arch - x64
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_1.c -o amd_1.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_2.c -o amd_2.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_aat.c -o amd_aat.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_control.c -o amd_control.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_defaults.c -o amd_defaults.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_dump.c -o amd_dump.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_global.c -o amd_global.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_info.c -o amd_info.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_order.c -o amd_order.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_order_wrapper.c -o amd_order_wrapper.o
+amd_order_wrapper.c: In function 'AMD_order_wrapper':
+amd_order_wrapper.c:15:1: warning: 'return' with a value, in function returning void
+ return(NULL);
+ ^
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_post_tree.c -o amd_post_tree.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_postorder.c -o amd_postorder.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_preprocess.c -o amd_preprocess.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c amd_valid.c -o amd_valid.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c sparseinv-init.c -o sparseinv-init.o
+c:/Rtools/mingw_64/bin/gcc  -I"C:/PROGRA~1/R/R-34~1.0/include" -DNDEBUG     -I"d:/Compiler/gcc-4.9.3/local330/include"     -O2 -Wall  -std=gnu99 -mtune=core2 -c sparseinvR.c -o sparseinvR.o
+c:/Rtools/mingw_64/bin/gcc -shared -s -static-libgcc -o sparseinv.dll tmp.def amd_1.o amd_2.o amd_aat.o amd_control.o amd_defaults.o amd_dump.o amd_global.o amd_info.o amd_order.o amd_order_wrapper.o amd_post_tree.o amd_postorder.o amd_preprocess.o amd_valid.o sparseinv-init.o sparseinvR.o -Ld:/Compiler/gcc-4.9.3/local330/lib/x64 -Ld:/Compiler/gcc-4.9.3/local330/lib -LC:/PROGRA~1/R/R-34~1.0/bin/x64 -lR
+installing to C:/Users/Andrew/Dropbox/CurrentProjects/Wollongong/pkgs/sparseinv/sparseinv.Rcheck/sparseinv/libs/x64
+** R
+** preparing package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded
+*** arch - i386
+*** arch - x64
+* DONE (sparseinv)

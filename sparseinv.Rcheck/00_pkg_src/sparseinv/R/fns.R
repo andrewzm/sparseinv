@@ -13,14 +13,14 @@
 # GNU General Public License for more details.
 
 #' @title Takahashi equations
-#' @description Computes the sparse inverse subset of a sparse matrix \code{Q} using the Takahashi equations.
+#' @description Computes the sparse inverse of a sparse matrix \code{Q} of using the Takahashi equations.
 #'
-#' @details This function first computes the Cholesky factor of \code{Q}. The fill-in reduction permutation is the approximate minimum degree permutation (amd) of Timothy Davis' SuiteSparse package configured to be slightly more aggressive than that in the \code{Matrix} package. The function then uses the Takahashi equations to compute the variances at the non-zero locations in the Cholesky factor from the factor itself. The equations themselves are implemented in C using the SparseSuite package of Timothy Davis.
+#' @details This function first computes the Cholesky factor of \code{Q}. The fill-in reduction permutation is the approximate minimum degree permutation (amd) of Timothy Davis' SuiteSparse package configured to be slightly more aggressive than that in the Matrix package. If the Cholesky factor fails, the matrix is coerced to be symmetric. The function then uses the Takahashi equations to compute the variances at the non-zero locations of the Cholesky factor from the factor itself. The equations themselves are implemented in C using the SparseSuite package of Timothy Davis.
 #'
 #' @param Q precision matrix (sparse or dense)
-#' @param cholQp the permuted Cholesky factor of Q (if known already). If both \code{Q} and \code{cholQp} are specified, \code{Q} is ignored
-#' @param return_perm_chol if 1 returns the permuted Cholesky factor
-#' @param P the permutation matrix (if known already)
+#' @param return_perm_chol if 1 returns the permuted Cholesky factor (not advisable for large systems)
+#' @param cholQp the permuted Cholesky factor of Q (if known already)
+#' @param P the pivot matrix (if known already)
 #' @param gc do garbage collection throughout (takes some time but useful for small memory machines)
 #' @return if return_perm_chol == 0, returns the partial matrix inverse of Q, where the non-zero elements correspond to those in the Cholesky factor.
 #' If !(return_perm_chol  == 0), returns a list with three elements, S (the partial matrix inverse), Lp (the Cholesky factor of the permuted matrix) and P (the
@@ -30,31 +30,23 @@
 #' @export
 #' @examples
 #' require(Matrix)
-#' Q = sparseMatrix(i = c(1, 1, 2, 2),
-#'                  j = c(1, 2, 1, 2),
-#'                  x = c(0.1, 0.2, 0.2, 1))
+#' Q = sparseMatrix(i=c(1,1,2,2),j=c(1,2,1,2),x=c(0.1,0.2,0.2,1))
 #' X <- cholPermute(Q)
-#' S_partial = Takahashi_Davis(Q, cholQp = X$Qpermchol, P = X$P)
+#' S_partial = Takahashi_Davis(Q,cholQp = X$Qpermchol,P=X$P)
 #' @references Takahashi, K., Fagan, J., Chin, M.-S., 1973. Formation of a sparse bus impedance matrix and its application to short circuit study. 8th PICA Conf. Proc. June 4--6, Minneapolis, Minn.
 #'
-#' Davis, T., 2014. sparseinv: Sparse Inverse Subset. URL https://au.mathworks.com/matlabcentral/fileexchange/33966-sparseinv--sparse-inverse-subset
-Takahashi_Davis <- function(Q = NULL,
-                            cholQp = NULL,
-                            return_perm_chol = 0,
-                            P = 0, gc = 0) {
-
-    .check_args_Takahashi(Q = Q,
-                          cholQp = cholQp,
-                          return_perm_chol = return_perm_chol,
-                          P = P,
-                          gc = gc)
+#' Davis, T., 2011. SPARSEINV: A MATLAB toolbox for computing the sparse inverse subset using the Takahashi equations. URL http://faculty.cse.tamu.edu/davis/suitesparse.html
+Takahashi_Davis <- function(Q,return_perm_chol = 0,cholQp = matrix(0,0,0),P=0,gc=0) {
 
     n <- nrow(Q)
+    rm(Q)
 
-    if (is.null(cholQp)) {
-        X <- cholPermute(Q = Q)
-        L <- X$Qpermchol
-        P <- X$P
+    if (dim(cholQp)[1] == 0) {
+        symchol <- Cholesky(forceSymmetric(Q))
+        j <- 1:n
+        i <- symchol@perm + 1
+        P <- sparseMatrix(i,j,x=rep(1,n))
+        Lperm <- L <- t(chol(t(P)%*%Q%*%P))
     } else {
         L <- cholQp
         P <- P
@@ -62,30 +54,25 @@ Takahashi_Davis <- function(Q = NULL,
 
     if (return_perm_chol == 0) rm(cholQp)
 
-    d <- diag(L)
-    L <- tril(L %*% sparseMatrix(i = 1:n,
-                                 j = 1:n,
-                                 x = 1/d), -1)
+    d <- diag (L)
+    L <- tril(L%*%sparseMatrix(i=1:n,j=1:n,x=1/d),-1)
     d <- d^2
-    D <- sparseMatrix(i = 1:n,
-                      j = 1:n,
-                      x = d)
+    D <- sparseMatrix(i=1:n,j=1:n,x=d)
 
     #ii <- L@i + 1 # in {1,...,n}
     dp <- diff(L@p)
     jj <- rep(seq_along(dp), dp) # in {1,...,n}, non-decreasing
 
     if(gc) gc()
-    Zpattern <- sparseMatrix(c(L@i + 1, jj, 1:n),
-                             c(jj, L@i + 1, 1:n))
+    Zpattern <- sparseMatrix(c(L@i + 1,jj,1:n),c(jj,L@i + 1,1:n))
     rm(dp,jj)
 
     if(gc) gc()
-    Z <- .sparseinv_wrapper(L, d, L, Zpattern)
+    Z <- sparseinv_wrapper(L,d,L,Zpattern)
     if (return_perm_chol == 0) {
-        return(P %*% Z %*% t(P))
+        return(P%*%Z%*%t(P))
     } else {
-        return(list(S= P %*% Z %*% t(P), Lp = cholQp, P=P)) # Only possible for small problems
+        return(list(S=P%*%Z%*%t(P),Lp = cholQp,P=P)) # Only possible for small problems
     }
 
 }
@@ -95,34 +82,52 @@ Takahashi_Davis <- function(Q = NULL,
 #' Davis' SuiteSparse package configured to be slightly more aggressive than that in the Matrix package. If the Cholesky factor fails, the matrix is coerced to be symmetric.
 #'
 #' @param Q matrix (sparse or dense), the Cholesky factor of which needs to be found
-#' @return A list with two elements, Qpermchol (the permuted Cholesky factor) and P (the pivoting order matrix) of class Matrix. Note that spam matrices are not returned to comply with the Takahashi_Davis function which requires objects of class Matrix.
+#' @param method If "amd", Timothy Davis SuiteSparse algorithm is used, if not that in the R Matrix package is employed
+#' @return A list with two elements, Qpermchol (the permuted Cholesky factor) and P (the pivoting order matrix)
 #' @keywords Cholesky factor
 #' @export
 #' @examples
 #' require(Matrix)
 #' cholPermute(sparseMatrix(i=c(1,1,2,2),j=c(1,2,1,2),x=c(0.1,0.2,0.2,1)))
 #' @references Havard Rue and Leonhard Held (2005). Gaussian Markov Random Fields: Theory and Applications. Chapman & Hall/CRC Press
-cholPermute <- function(Q, returnlist = TRUE)  {
-  if(!is(Q,"Matrix") & !is(Q,"spam") & !is(Q,"matrix"))
-      stop("Q needs to be a matrix, spam matrix or Matrix")
-
+cholPermute <- function(Q,method=NULL)  {
+  if(!is(Q,"Matrix") & !is(Q,"spam")) stop("Q needs to be a spam matrix or Matrix")
   if(!isSymmetric(Q)) stop("Q needs to be symmetric")
-  n <- nrow(Q) # dimension
-
-  ## Cast to Matrix
-  if(is(Q,"matrix")) {
-      Q <- as(Q,"dgCMatrix")
-  } else if(is(Q, "spam"))   {
-      Q <- as.dgCMatrix.spam(Q)
+  if(!is.null(method)) {
+    if(!(method == "spam") & !(method == "Matrix"))
+      stop("method needs to be NULL, 'spam' or 'Matrix'")
   }
 
-  P <- .amd_Davis(Q)
-  Qp <- Q[P,P]
-  Qpermchol  <- t(Matrix::chol(Qp))
-  P <- sparseMatrix(i = P, j = 1:n, x = 1)
-  return(list(Qpermchol = Qpermchol,
-              P = P))
+  ## Set defaults
+  if(is.null(method)) {
+    if(is(Q,"Matrix")) {
+      method = "Matrix" }
+    else if(is(Q,"spam")) {
+      method = "spam"
+    }
+  }
+
+  n <- nrow(Q) # dimension
+
+  ## Matrix
+  if(method == "Matrix") {
+    if(is(Q,"spam")) Q <- spam::as.dgCMatrix.spam(Q)
+    P <- amd_Davis(Q)
+    Qp <- Q[P,P]
+    Qpermchol  <- t(chol(Qp))
+    P <- sparseMatrix(i=P,j=1:n,x=1)
+    return(list(Qpermchol=Qpermchol,P=P))
+
+    ## Spam
+  } else if (method == "spam")   {
+    if(is(Q,"Matrix")) Q <- spam::as.spam.dgCMatrix(Q)
+    X  <- spam::chol(Q)
+    P <- sparseMatrix(i=X@pivot,j=1:nrow(X),x=1)
+    Qpermchol <- as(spam::as.dgCMatrix.spam(t(X)),"dtCMatrix")
+    return(list(Qpermchol = Qpermchol,P=P))
+  }
 }
+
 
 #' @title Solve the equation Qx = y
 #'
@@ -133,40 +138,34 @@ cholPermute <- function(Q, returnlist = TRUE)  {
 #' @param Q matrix (sparse or dense), the Cholesky factor of which needs to be found
 #' @param y matrix with the same number of rows as Q
 #' @param perm if F no permutation is carried out, if T permuted Cholesky factors are used
-#' @param cholQ the lower Cholesky factor of Q (if known already)
-#' @param cholQp the lower Cholesky factor of a permuted Q (if known already)
-#' @param P the permutation matrix (if known already)
+#' @param cholQ the Cholesky factor of Q (if known already)
+#' @param cholQp the permuted Cholesky factor of Q (if known already)
+#' @param P the pivot matrix (if known already)
 #' @return x solution to Qx = y
 #' @keywords Cholesky factor, linear solve
 #' @export
 #' @examples
 #' require(Matrix)
-#' Q = sparseMatrix(i = c(1, 1, 2, 2),
-#'                  j = c(1, 2, 1, 2),
-#'                  x = c(0.1, 0.2, 0.2, 1))
-#' y = matrix(c(1, 2), 2, 1)
-#' cholsolve(Q, y)
+#' Q = sparseMatrix(i=c(1,1,2,2),j=c(1,2,1,2),x=c(0.1,0.2,0.2,1))
+#' y = matrix(c(1,2),2,1)
+#' cholsolve(Q,y)
 #' @references Havard Rue and Leonhard Held (2005). Gaussian Markov Random Fields: Theory and Applications. Chapman & Hall/CRC Press
-cholsolve <- function(Q = NULL, y = NULL, perm = FALSE,
-                      cholQ = NULL, cholQp = NULL, P = NULL)  {
-
-
-    .check_args_cholsolve(Q = Q, y = y, perm = perm,
-                          cholQ = cholQ, cholQp = cholQp, P = P)
-
+cholsolve <- function(Q,y,perm=F,cholQ = matrix(1,0,0),cholQp = matrix(1,0,0),P=NA)  {
     ## Solve Qx = y
-    if (!perm) {
-        if (is.null(cholQ)) {
-            L <- t(chol(Q))
+    if (perm == F) {
+        if (dim(cholQ)[1] == 0) {
+            e <-tryCatch({L <- t(chol(Q))},error= function(temp) {print("Cholesky failed, coercing to symmetric")},finally="Cholesky successful")
+            if (class(e) == "character") {
+                L <- t(chol(forceSymmetric(Q))) }
         }  else {
             L <- cholQ
         }
-        v <- solve(L, y)
-        x <- solve(t(L), v)
-    }
 
-    if (perm) {
-        if (is.null(cholQp)) {
+        v <- solve(L,y)
+        x <- solve(t(L),v)
+    }
+    if (perm == T) {
+        if (dim(cholQp)[1] == 0) {
             QP <- cholPermute(Q)
             Lp <- QP$Qpermchol
             P <- QP$P
@@ -174,9 +173,9 @@ cholsolve <- function(Q = NULL, y = NULL, perm = FALSE,
             Lp <- cholQp
         }
 
-        v <- solve(Lp, t(P) %*% y)
-        w <- solve(t(Lp), v)
-        x <- P %*% w
+        v <- solve(Lp,t(P)%*%y)
+        w <- solve(t(Lp),v)
+        x <- P%*%w
     }
     return(x)
 }
@@ -202,8 +201,9 @@ cholsolve <- function(Q = NULL, y = NULL, perm = FALSE,
 #' @references Havard Rue and Leonhard Held (2005). Gaussian Markov Random Fields: Theory and Applications. Chapman & Hall/CRC Press
 cholsolveAQinvAT <- function(Q,A,Lp,P) {
     #Solve X = AQ^{-1}t(A)
-    W <- t(solve(Lp,t(A %*% P)))
-    tcrossprod(W)
+    W <- t(solve(Lp,t(P)%*%t(A)))
+    return(W %*% t(W))
+
 }
 
 #' @title Return the symbolic representation of a Matrix
@@ -219,7 +219,7 @@ cholsolveAQinvAT <- function(Q,A,Lp,P) {
 #' Qsymb <- symb(Q)
 #' Qsymb
 symb <- function(A) {
-  A@x <- rep(1, length(A@x))
+  A@x <- rep(1,length(A@x))
   A
 }
 
@@ -238,21 +238,20 @@ symb <- function(A) {
 #' Q1dens <- densify(Q1,Q2)
 #' Q1
 #' Q1dens
-densify <- function(A, B) {
+densify <- function(A,B) {
   ## Makes A at least as dense as B
   As <- symb(A)
   Bs <- symb(B)
   delta <- as(As - Bs,"dgTMatrix")
   idx <- which(delta@x == -1)
-  addon <- sparseMatrix(delta@i + 1,
-                        delta@j + 1,
-                        x = 0)
-  A + addon
+  addon <- sparseMatrix(delta@i+1,delta@j+1,x=0)
+  A <- A + addon
+  A
 }
 
 ######## NOT EXPORTED #################
 
-.sparseinv_wrapper <- function(L,d,U,Zpattern) {
+sparseinv_wrapper <- function(L,d,U,Zpattern) {
 
     n <- nrow(L)
     Lp <- L@p
@@ -277,7 +276,7 @@ densify <- function(A, B) {
     return(Z)
 }
 
-.amd_Davis <- function(Q) {
+amd_Davis <- function(Q) {
     n <- nrow(Q)
     Ap <- Q@p
     Ai <- Q@i
@@ -288,7 +287,7 @@ densify <- function(A, B) {
 }
 
 
-.amd_test <- function() {
+amd_test <- function() {
     n=24
     Ap = c( 0, 9, 15, 21, 27, 33, 39, 48, 57, 61, 70, 76, 82, 88, 94, 100,
             106, 110, 119, 128, 137, 143, 152, 156, 160 )
@@ -317,58 +316,9 @@ densify <- function(A, B) {
            0, 2, 6, 10, 11, 19, 20, 21, 22,
            2, 20, 21, 22,
            6, 11, 12, 23 )
-    X <- .C("AMD_order_wrapper", as.integer(n), as.integer(Ap), as.integer(Ai),
-            P = integer(n), Control = double(5), Info = double(20))
+    Q <- as(sparseMatrix(i=Ai,p=Ap,index1=F,x=1),"dgTMatrix")
+    write.table(data.frame(i=Q@i,j=Q@j,x=1),file="Chol_test.csv")
+    X <- .C("AMD_order_wrapper",as.integer(n),as.integer(Ap),as.integer(Ai),
+            P = integer(n), Control=double(5),Info=double(20))
 }
 
-.check_args_Takahashi <- function(Q, cholQp, P, return_perm_chol, gc) {
-    if(!is.null(Q))
-        if(!(is(Q,"spam") | is(Q,"Matrix") | is(Q,"matrix")))
-            stop("Q needs to be empty, of class matrix, Matrix, or spam")
-
-    if(!is.null(cholQp))
-        if(!(is(Q,"spam") | is(Q,"Matrix") | is(Q,"matrix")))
-            stop("Q needs to be empty, of class matrix, Matrix, or spam")
-
-    if(!is.null(P))
-        if(!(is(Q,"spam") | is(Q,"Matrix") | is(Q,"matrix")))
-            stop("Q needs to be empty, of class matrix, Matrix, or spam")
-
-    if(is.null(Q) & is.null(cholQp))
-        stop("At least one of Q and cholQp needs to be specified")
-
-    if(!(return_perm_chol == 1 | return_perm_chol == 0)) {
-        stop("return_perm_chol needs to be 1 or 0 (TRUE or FALSE)")
-    }
-
-    if(!(gc == 1 | gc == 0)) {
-        stop("gc needs to be 1 or 0 (TRUE or FALSE)")
-    }
-
-}
-
-.check_args_cholsolve <- function(Q = NULL, y = NULL, perm = FALSE,
-                      cholQ = NULL, cholQp = NULL, P = NULL) {
-
-    if(is.null(Q) & is.null(cholQ) & is.null(cholQp))
-        stop("One of Q, cholQ or cholQp has to be specified")
-
-    if(!is.null(cholQ) & !is.null(cholQp))
-        stop("cholQ or cholQp need to be specified, not both")
-
-    if(!is.null(cholQp) & is.null(P))
-        stop("When specifying cholQp, P also needs to be set")
-
-    if(!(perm == 1 | perm == 0))
-        stop("perm needs to be 1 or 0 (TRUE or FALSE)")
-
-    if(is.null(y))
-        stop("y needs to be set")
-
-    if(!perm & (is.null(Q) & is.null(cholQ)))
-        stop("If perm == FALSE, then Q or cholQ need to be set")
-
-    if(perm & (is.null(Q) & is.null(cholQp)))
-        stop("If perm == TRUE, then Q or cholQp need to be set")
-
-}

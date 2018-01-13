@@ -1,0 +1,3 @@
+LIBRARY sparseinv.dll
+EXPORTS
+ R_init_sparseinv

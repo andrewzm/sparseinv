@@ -1,0 +1,7 @@
+name	user	system	elapsed
+Takahashi_Davis	0.06	0.00	0.06	
+cholPermute	0.09	0.00	0.09	
+cholsolve	0	0	0	
+cholsolveAQinvAT	0.01	0.00	0.02	
+densify	0.02	0.00	0.02	
+symb	0.00	0.02	0.01	

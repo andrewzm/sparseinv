@@ -4,8 +4,8 @@
 \alias{cholsolve}
 \title{Solve the equation Qx = y}
 \usage{
-cholsolve(Q = NULL, y = NULL, perm = FALSE, cholQ = NULL,
-  cholQp = NULL, P = NULL)
+cholsolve(Q, y, perm = F, cholQ = matrix(1, 0, 0), cholQp = matrix(1, 0,
+  0), P = NA)
 }
 \arguments{
 \item{Q}{matrix (sparse or dense), the Cholesky factor of which needs to be found}
@@ -14,11 +14,11 @@ cholsolve(Q = NULL, y = NULL, perm = FALSE, cholQ = NULL,
 
 \item{perm}{if F no permutation is carried out, if T permuted Cholesky factors are used}
 
-\item{cholQ}{the lower Cholesky factor of Q (if known already)}
+\item{cholQ}{the Cholesky factor of Q (if known already)}
 
-\item{cholQp}{the lower Cholesky factor of a permuted Q (if known already)}
+\item{cholQp}{the permuted Cholesky factor of Q (if known already)}
 
-\item{P}{the permutation matrix (if known already)}
+\item{P}{the pivot matrix (if known already)}
 }
 \value{
 x solution to Qx = y
@@ -30,11 +30,9 @@ internally.
 }
 \examples{
 require(Matrix)
-Q = sparseMatrix(i = c(1, 1, 2, 2),
-                 j = c(1, 2, 1, 2),
-                 x = c(0.1, 0.2, 0.2, 1))
-y = matrix(c(1, 2), 2, 1)
-cholsolve(Q, y)
+Q = sparseMatrix(i=c(1,1,2,2),j=c(1,2,1,2),x=c(0.1,0.2,0.2,1))
+y = matrix(c(1,2),2,1)
+cholsolve(Q,y)
 }
 \references{
 Havard Rue and Leonhard Held (2005). Gaussian Markov Random Fields: Theory and Applications. Chapman & Hall/CRC Press
