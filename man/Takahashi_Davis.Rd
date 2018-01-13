@@ -8,19 +8,19 @@ Takahashi_Davis(Q = NULL, cholQp = NULL, return_perm_chol = 0, P = 0,
   gc = 0)
 }
 \arguments{
-\item{Q}{precision matrix (sparse or dense)}
+\item{Q}{precision matrix of class \code{matrix}, \code{Matrix}, or \code{spam}}
 
-\item{cholQp}{the permuted Cholesky factor of Q (if known already). If both \code{Q} and \code{cholQp} are specified, \code{Q} is ignored}
+\item{cholQp}{the Cholesky factor of the permuted \code{Q} (if known already). If both \code{Q} and \code{cholQp} are specified, \code{Q} is ignored}
 
-\item{return_perm_chol}{if 1 returns the permuted Cholesky factor}
+\item{return_perm_chol}{if 1, the Cholesky factor of the permuted \code{Q} is returned}
 
 \item{P}{the permutation matrix (if known already)}
 
-\item{gc}{do garbage collection throughout (takes some time but useful for small memory machines)}
+\item{gc}{do garbage collection throughout (may increase computational time but useful for small memory machines)}
 }
 \value{
-if return_perm_chol == 0, returns the partial matrix inverse of Q, where the non-zero elements correspond to those in the Cholesky factor.
-If !(return_perm_chol  == 0), returns a list with three elements, S (the partial matrix inverse), Lp (the Cholesky factor of the permuted matrix) and P (the
+if return_perm_chol == 0, the sparse inverse subset of Q is returned, where the non-zero elements correspond to those in the Cholesky factor of its permutation.
+If !(return_perm_chol  == 0), a list with three elements is returned: \code{S} (the sparse inverse subset), Lp (the Cholesky factor of the permuted matrix) and P (the
 permutation matrix)
 }
 \description{
@@ -43,7 +43,8 @@ S_partial = Takahashi_Davis(Q, cholQp = X$Qpermchol, P = X$P)
 \references{
 Takahashi, K., Fagan, J., Chin, M.-S., 1973. Formation of a sparse bus impedance matrix and its application to short circuit study. 8th PICA Conf. Proc. June 4--6, Minneapolis, Minn.
 
-Davis, T., 2014. sparseinv: Sparse Inverse Subset. URL https://au.mathworks.com/matlabcentral/fileexchange/33966-sparseinv--sparse-inverse-subset
+Davis, T. A., 2014. sparseinv: Sparse Inverse Subset. URL https://au.mathworks.com/matlabcentral/fileexchange/33966-sparseinv--sparse-inverse-subset
+Davis, T. A., 2006. Direct Methods for Sparse Linear Systems. SIAM, Philadelphia, PA.
 }
 \keyword{Cholesky}
 \keyword{factor,}

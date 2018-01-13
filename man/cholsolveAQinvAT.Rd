@@ -11,22 +11,24 @@ cholsolveAQinvAT(Q, A, Lp, P)
 
 \item{A}{matrix}
 
-\item{Lp}{Permuted Cholesky factor of Q}
+\item{Lp}{the lower Cholesky factor of a permuted Q}
 
-\item{P}{the pivot matrix}
+\item{P}{the permutation matrix}
 }
 \value{
 x solution to \code{X = AQ^{-1}t(A)}
 }
 \description{
-This function is a wrapper of solve() for finding \code{X = AQ^{-1}t(A)} when the permuted Cholesky factor of Q is known.
+This function is a wrapper of \code{solve()} for finding \code{X = AQ^{-1}t(A)} when the permuted Cholesky factor of Q is known.
 #'
 }
 \examples{
 require(Matrix)
-Q <- sparseMatrix(i=c(1,1,2,2),j=c(1,2,1,2),x=c(0.1,0.2,0.2,1))
+Q = sparseMatrix(i = c(1, 1, 2, 2),
+                 j = c(1, 2, 1, 2),
+                 x = c(0.1, 0.2, 0.2, 1))
 X <- cholPermute(Q)
-y <- matrix(c(1,2),2,1)
+y <- matrix(c(1,2), 2, 1)
 A <- y \%*\% t(y)
 cholsolveAQinvAT(Q,A,X$Qpermchol,X$P)
 }

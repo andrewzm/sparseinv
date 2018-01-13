@@ -12,7 +12,7 @@ cholsolve(Q = NULL, y = NULL, perm = FALSE, cholQ = NULL,
 
 \item{y}{matrix with the same number of rows as Q}
 
-\item{perm}{if F no permutation is carried out, if T permuted Cholesky factors are used}
+\item{perm}{if FLASE no permutation is carried out, if TRUE permuted Cholesky factors are used}
 
 \item{cholQ}{the lower Cholesky factor of Q (if known already)}
 

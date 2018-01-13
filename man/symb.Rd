@@ -18,7 +18,9 @@ This function takes an object of class Matrix and returns the same Matrix with a
 }
 \examples{
 require(Matrix)
-Q <- sparseMatrix(i=c(1,2,2),j=c(1,1,2),x=c(0.1,0.2,1))
+Q = sparseMatrix(i = c(1, 1, 2, 2),
+                 j = c(1, 2, 1, 2),
+                 x = c(0.1, 0.2, 0.2, 1))
 Qsymb <- symb(Q)
 Qsymb
 }
