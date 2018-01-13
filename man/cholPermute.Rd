@@ -7,7 +7,7 @@
 cholPermute(Q)
 }
 \arguments{
-\item{Q}{precision matrix of class \code{matrix}, \code{Matrix}, or \code{spam}}
+\item{Q}{precision matrix of class \code{matrix}, \code{Matrix} (column-compressed, i.e., \code{dgCMatrix} or \code{dsCMatrix}), or \code{spam}}
 }
 \value{
 A list with two elements, Qpermchol (the permuted Cholesky factor) and P (the permutation matrix) of class Matrix. Note that \code{spam} matrices are not returned to comply with the Takahashi_Davis function which requires objects of class \code{Matrix}.

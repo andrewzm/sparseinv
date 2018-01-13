@@ -8,13 +8,13 @@ Takahashi_Davis(Q = NULL, cholQp = NULL, return_perm_chol = 0, P = 0,
   gc = 0)
 }
 \arguments{
-\item{Q}{precision matrix of class \code{matrix}, \code{Matrix}, or \code{spam}}
+\item{Q}{precision matrix of class \code{matrix}, \code{Matrix} (column-compressed, i.e., \code{dgCMatrix} or \code{dsCMatrix}), or \code{spam}}
 
-\item{cholQp}{the Cholesky factor of the permuted \code{Q} (if known already). If both \code{Q} and \code{cholQp} are specified, \code{Q} is ignored}
+\item{cholQp}{the Cholesky factor of class \code{dtCMatrix} of the permuted \code{Q} (if known already). If both \code{Q} and \code{cholQp} are specified, \code{Q} is ignored}
 
 \item{return_perm_chol}{if 1, the Cholesky factor of the permuted \code{Q} is returned}
 
-\item{P}{the permutation matrix (if known already)}
+\item{P}{the permutation matrix of class \code{dgCMatrix} (if known already)}
 
 \item{gc}{do garbage collection throughout (may increase computational time but useful for small memory machines)}
 }

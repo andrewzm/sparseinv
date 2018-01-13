@@ -4,12 +4,12 @@
 \alias{cholsolveAQinvAT}
 \title{Solve the equation X = AQ^{-1}t(A) under permutations}
 \usage{
-cholsolveAQinvAT(Q, A, Lp, P)
+cholsolveAQinvAT(Q = NULL, A = NULL, Lp = NULL, P = NULL)
 }
 \arguments{
-\item{Q}{ignored (deprecated)}
+\item{Q}{matrix (if of class \code{Matrix} needs to be column-compressed, i.e., \code{dgCMatrix} or \code{dsCMatrix})), the Cholesky factor of which needs to be found}
 
-\item{A}{matrix}
+\item{A}{sparse or dense matrix}
 
 \item{Lp}{the lower Cholesky factor of a permuted Q}
 

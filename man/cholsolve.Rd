@@ -8,7 +8,7 @@ cholsolve(Q = NULL, y = NULL, perm = FALSE, cholQ = NULL,
   cholQp = NULL, P = NULL)
 }
 \arguments{
-\item{Q}{matrix (sparse or dense), the Cholesky factor of which needs to be found}
+\item{Q}{matrix (if of class \code{Matrix} needs to be column-compressed, i.e., \code{dgCMatrix} or \code{dsCMatrix})), the Cholesky factor of which needs to be found}
 
 \item{y}{matrix with the same number of rows as Q}
 
