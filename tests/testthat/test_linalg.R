@@ -14,6 +14,8 @@ test_that("other linalg functions", {
   expect_equal(Takahashi_Davis(A),Takahashi_Davis(A,cholQp = X$Qpermchol, P = X$P))
   expect_equal(as.numeric(cholsolveAQinvAT(A, b,X$Qpermchol,X$P)),
                as.numeric(b  %*% solve(A) %*% t(b)))
+  expect_equal(as.numeric(cholsolveAQinvAT(A, b)),
+               as.numeric(b  %*% solve(A) %*% t(b)))
   expect_is(Takahashi_Davis(A),"dgCMatrix")
   expect_is(.amd_test(),"list")
   expect_equal(cholsolve(A,b),solve(A) %*% b)

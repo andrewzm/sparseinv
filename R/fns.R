@@ -17,10 +17,10 @@
 #'
 #' @details This function first computes the Cholesky factor of \code{Q}. The fill-in reduction permutation is the approximate minimum degree permutation (amd) of Timothy Davis' SuiteSparse package configured to be slightly more aggressive than that in the \code{Matrix} package. The function then uses the Takahashi equations to compute the variances at the non-zero locations in the Cholesky factor from the factor itself. The equations themselves are implemented in C using the SparseSuite package of Timothy Davis.
 #'
-#' @param Q precision matrix of class \code{matrix}, \code{Matrix}, or \code{spam}
-#' @param cholQp the Cholesky factor of the permuted \code{Q} (if known already). If both \code{Q} and \code{cholQp} are specified, \code{Q} is ignored
+#' @param Q precision matrix of class \code{matrix}, \code{Matrix} (column-compressed, i.e., \code{dgCMatrix} or \code{dsCMatrix}), or \code{spam}
+#' @param cholQp the Cholesky factor of class \code{dtCMatrix} of the permuted \code{Q} (if known already). If both \code{Q} and \code{cholQp} are specified, \code{Q} is ignored
 #' @param return_perm_chol if 1, the Cholesky factor of the permuted \code{Q} is returned
-#' @param P the permutation matrix (if known already)
+#' @param P the permutation matrix of class \code{dgCMatrix} (if known already)
 #' @param gc do garbage collection throughout (may increase computational time but useful for small memory machines)
 #' @return if return_perm_chol == 0, the sparse inverse subset of Q is returned, where the non-zero elements correspond to those in the Cholesky factor of its permutation.
 #' If !(return_perm_chol  == 0), a list with three elements is returned: \code{S} (the sparse inverse subset), Lp (the Cholesky factor of the permuted matrix) and P (the
@@ -95,7 +95,7 @@ Takahashi_Davis <- function(Q = NULL,
 #' @description This function is similar to chol(A, pivot=T) when A is a sparse matrix. The fill-in reduction permutation is the approximate minimum degree permutation of
 #' Davis' SuiteSparse package configured to be slightly more aggressive than that in the Matrix package.
 #'
-#' @param Q precision matrix of class \code{matrix}, \code{Matrix}, or \code{spam}
+#' @param Q precision matrix of class \code{matrix}, \code{Matrix} (column-compressed, i.e., \code{dgCMatrix} or \code{dsCMatrix}), or \code{spam}
 #' @return A list with two elements, Qpermchol (the permuted Cholesky factor) and P (the permutation matrix) of class Matrix. Note that \code{spam} matrices are not returned to comply with the Takahashi_Davis function which requires objects of class \code{Matrix}.
 #' @keywords Cholesky factor
 #' @export
@@ -133,7 +133,7 @@ cholPermute <- function(Q)  {
 #' user error when attempting to re-permute the matrices prior or after solving. The user also has an option for the permuted Cholesky factorisation of Q to be carried out
 #' internally.
 #'
-#' @param Q matrix (sparse or dense), the Cholesky factor of which needs to be found
+#' @param Q matrix (if of class \code{Matrix} needs to be column-compressed, i.e., \code{dgCMatrix} or \code{dsCMatrix})), the Cholesky factor of which needs to be found
 #' @param y matrix with the same number of rows as Q
 #' @param perm if FLASE no permutation is carried out, if TRUE permuted Cholesky factors are used
 #' @param cholQ the lower Cholesky factor of Q (if known already)
@@ -188,8 +188,8 @@ cholsolve <- function(Q = NULL, y = NULL, perm = FALSE,
 #'
 #' @description This function is a wrapper of \code{solve()} for finding \code{X = AQ^{-1}t(A)} when the permuted Cholesky factor of Q is known.
 #' #'
-#' @param Q ignored (deprecated)
-#' @param A matrix
+#' @param Q matrix (if of class \code{Matrix} needs to be column-compressed, i.e., \code{dgCMatrix} or \code{dsCMatrix})), the Cholesky factor of which needs to be found
+#' @param A sparse or dense matrix
 #' @param Lp the lower Cholesky factor of a permuted Q
 #' @param P the permutation matrix
 #' @return x solution to \code{X = AQ^{-1}t(A)}
@@ -205,9 +205,18 @@ cholsolve <- function(Q = NULL, y = NULL, perm = FALSE,
 #' A <- y %*% t(y)
 #' cholsolveAQinvAT(Q,A,X$Qpermchol,X$P)
 #' @references Havard Rue and Leonhard Held (2005). Gaussian Markov Random Fields: Theory and Applications. Chapman & Hall/CRC Press
-cholsolveAQinvAT <- function(Q,A,Lp,P) {
+cholsolveAQinvAT <- function(Q = NULL, A = NULL, Lp = NULL, P = NULL) {
+
+    .check_args_cholsolveAQinvAT(Q = Q, A = A, Lp = Lp, P = P)
+
+    if(is.null(Lp) & is.null(P)) {
+        QP <- cholPermute(Q)
+        Lp <- QP$Qpermchol
+        P <- QP$P
+    }
+
     #Solve X = AQ^{-1}t(A)
-    W <- t(solve(Lp,t(A %*% P)))
+    W <- t(solve(Lp, t(A %*% P)))
     tcrossprod(W)
 }
 
@@ -324,6 +333,7 @@ densify <- function(A, B) {
            0, 2, 6, 10, 11, 19, 20, 21, 22,
            2, 20, 21, 22,
            6, 11, 12, 23 )
+    #Q <- as(sparseMatrix(i=Ai,p=Ap,index1=F,x=1),"dgTMatrix")
     X <- .C("AMD_order_wrapper", as.integer(n), as.integer(Ap), as.integer(Ai),
             P = integer(n), Control = double(5), Info = double(20))
 }
@@ -378,4 +388,15 @@ densify <- function(A, B) {
     if(perm & (is.null(Q) & is.null(cholQp)))
         stop("If perm == TRUE, then Q or cholQp need to be set")
 
+}
+
+.check_args_cholsolveAQinvAT <- function(Q = NULL, A = NULL, Lp = NULL, P = NULL)  {
+    if(is.null(A))
+        stop("A needs to be specified")
+    if(is.null(Q) & is.null(Lp) & is.null(P))
+        stop("Q or (Lp and P) need to be specified")
+    if(!is.null(Lp) & is.null(P))
+        stop("Both Lp and P need to be specified")
+    if(is.null(Lp) & !is.null(P))
+        stop("Both Lp and P need to be specified")
 }
