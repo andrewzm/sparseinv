@@ -1,4 +1,6 @@
 .Rproj.user
+*.Rproj
+*.tar.gz
 .Rhistory
 .RData
 src-i386
