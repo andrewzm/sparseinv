@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/andrewzm/sparseinv.svg)](https://travis-ci.org/andrewzm/sparseinv)
+[![codecov.io](http://codecov.io/github/andrewzm/sparseinv/coverage.svg?branch=master)](http://codecov.io/github/andrewzm/sparseinv?branch=master)
 
 # sparseinv
 
