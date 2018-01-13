@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 .tar.gz$
 .dll$
+^\.travis.yml$
+^README.md$

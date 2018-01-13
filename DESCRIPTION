@@ -10,8 +10,12 @@ Authors@R: c(
     person("Iain","Duff", ,"iain.duff@stfc.ac.uk", role = "ctb"),
 	person("John K.","Reid", ,"John.Reid@stfc.ac.uk", role = "ctb"))
 Maintainer: Andrew Zammit-Mangion <andrewzm@gmail.com>
+Suggests:
+    covr,
+    testthat
 Imports:
     Matrix,
+	methods,
     spam
 Description: Creates a wrapper for the SuiteSparse routines 
     that compute the Takahashi equations. These equations compute the

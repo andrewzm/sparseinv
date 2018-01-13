@@ -18,5 +18,5 @@ test_that("other linalg functions", {
   expect_is(.amd_test(),"list")
   expect_equal(cholsolve(A,b),solve(A) %*% b)
   expect_equal(cholsolve(A,b,perm = T),solve(A) %*% b)
-  expect_equal(cholsolve(A,b,perm = T,cholQp = X$Qpermchol,P = X$P),edsolve(A) %*% b)
+  expect_equal(cholsolve(A,b,perm = T,cholQp = X$Qpermchol,P = X$P),solve(A) %*% b)
 })

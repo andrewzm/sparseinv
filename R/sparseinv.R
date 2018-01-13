@@ -20,6 +20,7 @@
 #' @useDynLib sparseinv, .registration=TRUE
 #' @import Matrix
 #' @import spam
+#' @importFrom methods as is
 NULL
 
 
