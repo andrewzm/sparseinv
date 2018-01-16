@@ -1,5 +1,5 @@
 # sparseinv: An R Software package for computing the sparse inverse subset with the Takahashi equations with large datasets.
-# Copyright (c) 2017 University of Wollongong
+# Copyright (c) 2017 Andrew Zammit-Mangion
 # Author: Andrew Zammit-Mangion, azm (at) uow.edu.au
 #
 # This program is free software; you can redistribute it and/or
