@@ -19,7 +19,7 @@
 #' @docType package
 #' @useDynLib sparseinv, .registration=TRUE
 #' @import Matrix
-#' @import spam
+#' @importFrom spam as.dgCMatrix.spam as.spam.dgCMatrix
 #' @importFrom methods as is
 NULL
 
