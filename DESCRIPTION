@@ -1,7 +1,7 @@
 Package: sparseinv
 Type: Package
 Title: Computation of the Sparse Inverse Subset
-Version: 0.1.2
+Version: 0.1.3
 Date: 2018-04-01
 Authors@R: c(
     person("Andrew", "Zammit-Mangion", , "andrewzm@gmail.com", c("aut", "cre")),
