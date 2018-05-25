@@ -5,5 +5,5 @@
 \alias{sparseinv-package}
 \title{sparseinv}
 \description{
-This package creates a wrapper for the SuiteSparse routines in C that us the Takahashi equations to compute the elements of the inverse of a sparse matrix at locations where the (permuted) Cholesky factor is non-zero. The resulting matrix is known as a sparse inverse subset. Some helper functions (like the permuted Cholesky factorisation) are also implemented. Support for spam matrices is currently limited and will be implemented in the future.
+This package creates a wrapper for the SuiteSparse routines in C that use the Takahashi equations to compute the elements of the inverse of a sparse matrix at locations where the (permuted) Cholesky factor is structurally non-zero. The resulting matrix is known as a sparse inverse subset. Some helper functions (like the permuted Cholesky factorisation) are also implemented. Support for spam matrices is currently limited and will be implemented in the future.
 }
