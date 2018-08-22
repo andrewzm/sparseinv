@@ -64,13 +64,9 @@ Takahashi_Davis <- function(Q = NULL,
     if (return_perm_chol == 0) rm(cholQp)
 
     d <- diag(L)
-    L <- tril(L %*% sparseMatrix(i = 1:n,
-                                 j = 1:n,
-                                 x = 1/d), -1)
+    L <- tril(L %*% Diagonal(x = 1/d), -1)
     d <- d^2
-    D <- sparseMatrix(i = 1:n,
-                      j = 1:n,
-                      x = d)
+    D <- Diagonal(x = d)
 
     #ii <- L@i + 1 # in {1,...,n}
     dp <- diff(L@p)
@@ -86,7 +82,8 @@ Takahashi_Davis <- function(Q = NULL,
     if (return_perm_chol == 0) {
         return(P %*% Z %*% t(P))
     } else {
-        return(list(S= P %*% Z %*% t(P), Lp = cholQp, P=P)) # Only possible for small problems
+        return(list(S= P %*% Z %*% t(P), Lp = cholQp, P=P))
+        # Only possible for small problems
     }
 
 }
@@ -114,7 +111,7 @@ cholPermute <- function(Q)  {
 
   ## Cast to Matrix
   if(is(Q,"matrix")) {
-      Q <- as(Q,"dgCMatrix")
+      Q <- as(Q,"dsCMatrix")
   } else if(is(Q, "spam"))   {
       Q <- as.dgCMatrix.spam(Q)
   }
@@ -284,8 +281,12 @@ densify <- function(A, B) {
     znz = Zpatp [n+1]
 
 
-    X <- .C("sparseinv",as.integer(n),as.integer(Lp),as.integer(Li),as.double(Lx),as.double(d),as.integer(Up),as.integer(Uj),as.double(Ux),as.integer(Zpatp),as.integer(Zpati),result = double(znz))
-    X <- X$result
+    if(0) {
+        X <- .C("sparseinv",as.integer(n),as.integer(Lp),as.integer(Li),as.double(Lx),as.double(d),as.integer(Up),as.integer(Uj),as.double(Ux),as.integer(Zpatp),as.integer(Zpati),result = double(znz))
+        X <- X$result
+    } else {
+        X <- sparseinv2(n = as.integer(n),Lp = as.integer(Lp), Li = as.integer(Li),Lx = as.double(Lx),d = as.double(d),Up = as.integer(Up),Uj = as.integer(Uj),Ux = as.double(Ux),Zp = as.integer(Zpatp),Zi = as.integer(Zpati))
+    }
 
     rm(U,L,Zpattern,Ux,Uj,Up,Lp,Li,Lx)
     Z <- sparseMatrix(p = Zpatp, i =Zpati, x = X,index1=F)

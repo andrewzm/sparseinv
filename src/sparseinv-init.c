@@ -1,4 +1,4 @@
-/*sparseinv: An R Software package for computing the sparse inverse subset 
+/*sparseinv: An R Software package for computing the sparse inverse subset
  with the Takahashi equations with large datasets.
 
  Copyright (c) 2017 Andrew Zammit-Mangion
@@ -24,22 +24,22 @@ GNU General Public License for more details. */
 
 void attribute_visible R_init_sparseinv(DllInfo *info) {
 
-  static R_NativePrimitiveArgType sparseinv_t[] = {
-      INTSXP,INTSXP,INTSXP,REALSXP,REALSXP,INTSXP,INTSXP,REALSXP,INTSXP,INTSXP,REALSXP
-  };
 
   static R_NativePrimitiveArgType AMD_order_wrapper_t[] = {
         INTSXP,INTSXP,INTSXP,INTSXP,REALSXP,REALSXP
   };
 
   static R_CMethodDef cMethods[] = {
-        {"sparseinv", (DL_FUNC) &sparseinv, 11, sparseinv_t},
         {"AMD_order_wrapper", (DL_FUNC) &AMD_order_wrapper, 6, AMD_order_wrapper_t},
         {NULL, NULL, 0}
   };
 
+  static R_CallMethodDef callMethods[]  = {
+      {"_sparseinv_sparseinv2", (DL_FUNC) &_sparseinv_sparseinv2, 10},
+      {NULL, NULL, 0}
+  };
 
-  R_registerRoutines(info, cMethods, NULL, NULL, NULL);
+  R_registerRoutines(info, cMethods, callMethods, NULL, NULL);
   R_useDynamicSymbols(info, FALSE);
 
 }
